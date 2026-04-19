@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Instagram iOS Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="ios-header">
+        <button id="openSearchBtn" class="ios-icon-btn">🔍 بحث</button>
+        
+        <div class="header-center">
+            <div class="profile-pic">👤</div>
+            <div class="user-info">
+                <h1 class="username">Instagram User</h1>
+                <span class="status">أرشيف المحادثة</span>
+            </div>
+        </div>
+        
+        <button class="ios-icon-btn">ℹ️</button>
+    </header>
+
+    <main class="chat-container" id="chatBox">
+        <div id="loadingState" class="loading-state">
+            <p>جاري تحميل المحادثات وترتيبها...</p>
+        </div>
+    </main>
+
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-header">
+            <div class="search-bar">
+                <span>🔍</span>
+                <input type="text" id="searchInput" placeholder="بحث...">
+            </div>
+            <button id="closeSearchBtn" class="cancel-btn">إلغاء</button>
+        </div>
+        <div class="search-results" id="searchResults">
+            <div class="empty-search">اكتب للبحث في الرسائل...</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
