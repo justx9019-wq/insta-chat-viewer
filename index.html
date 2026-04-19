@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أرشيف المحادثة الاحترافي V2</title>
+    <title>أرشيف المحادثة الاحترافي</title>
     <style>
+        /* التنسيقات العامة */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #fafafa; margin: 0; padding: 0; overflow: hidden; }
         .app-container { max-width: 700px; margin: 0 auto; background: white; height: 100vh; display: flex; flex-direction: column; border-left: 1px solid #dbdbdb; border-right: 1px solid #dbdbdb; position: relative; }
         
-        /* شريط التمرير السريع (الخيط) */
+        /* شريط التمرير السريع (السهم/الخيط) */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; cursor: pointer; }
         ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
 
+        /* الهيدر وأدوات التحكم */
         .header { padding: 15px; border-bottom: 1px solid #dbdbdb; display: flex; flex-direction: column; gap: 10px; background: white; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
         .header-top h2 { margin: 0; font-size: 16px; color: #262626; }
@@ -26,6 +28,7 @@
         .search-btn, .filter-select { padding: 8px 15px; border: 1px solid #dbdbdb; border-radius: 8px; background: #efefef; font-size: 13px; cursor: pointer; outline: none; }
         .filter-select { flex: 1; text-align: right; }
 
+        /* منطقة المحادثة */
         .chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; scroll-behavior: smooth; }
         .message-wrapper { display: flex; flex-direction: column; max-width: 75%; transition: background 0.3s; padding: 5px; border-radius: 8px; }
         .message-wrapper.me { align-self: flex-start; }
@@ -33,23 +36,26 @@
         
         .message { padding: 12px 16px; border-radius: 22px; font-size: 15px; line-height: 1.5; word-wrap: break-word; }
         .me .message { background-color: #3797f0; color: white; border-bottom-right-radius: 4px; }
-        .them .message { background-color: #efefef; color: black; border-bottom-left-radius: 4px; font-style: normal; }
-        .media-placeholder { font-style: italic; opacity: 0.8; font-size: 14px; }
-
+        .them .message { background-color: #efefef; color: black; border-bottom-left-radius: 4px; }
+        
         .time { font-size: 11px; color: #8e8e8e; margin-top: 5px; }
         .me .time { text-align: left; margin-left: 5px; }
         .them .time { text-align: right; margin-right: 5px; }
         
         .date-divider { text-align: center; font-size: 12px; color: #8e8e8e; margin: 25px 0 15px 0; font-weight: bold; }
+        img.chat-img { max-width: 100%; border-radius: 15px; margin-top: 5px; }
+
+        /* تمييز الرسالة عند القفز إليها */
         .highlight-msg { background-color: #fff3cd !important; border-radius: 10px; }
 
-        /* واجهة البحث */
+        /* واجهة البحث (تغطي الشاشة) */
         .search-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 20; flex-direction: column; color: white; }
         .search-header { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #333; gap: 10px; }
         .close-search { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
         .search-input { flex: 1; background: #262626; border: none; color: white; padding: 10px 15px; border-radius: 10px; outline: none; font-size: 14px; }
         .search-results { flex: 1; overflow-y: auto; padding: 10px 0; }
         
+        /* تصميم نتيجة البحث كصورة إنستغرام */
         .result-item { display: flex; align-items: center; padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #262626; gap: 12px; }
         .result-item:hover { background: #262626; }
         .result-avatar { width: 40px; height: 40px; border-radius: 50%; background: #555; display: flex; justify-content: center; align-items: center; font-size: 20px; color: #ccc; }
@@ -69,14 +75,18 @@
             <div class="controls-row">
                 <label for="fileInput" class="upload-btn">📁 اختر الملفات</label>
                 <input type="file" id="fileInput" accept=".html" multiple>
-                <select class="filter-select" id="monthFilter"><option value="">التاريخ...</option></select>
+                
+                <select class="filter-select" id="monthFilter">
+                    <option value="">تصفية حسب التاريخ...</option>
+                </select>
+
                 <button class="search-btn" id="openSearchBtn">🔍 بحث</button>
             </div>
         </div>
         
         <div class="chat-box" id="chatBox">
             <div style="text-align: center; color: #888; margin-top: 50px; line-height: 2;">
-                يرجى تحديد ملفات المحادثة معاً لعرضها بترتيبها الصحيح.
+                يرجى الضغط على "اختر الملفات" وتحديد ملفات المحادثة معاً.
             </div>
         </div>
 
@@ -85,7 +95,8 @@
                 <button class="close-search" id="closeSearchBtn">⟨</button>
                 <input type="text" class="search-input" id="searchInput" placeholder="ابحث في المحادثة...">
             </div>
-            <div class="search-results" id="searchResults"></div>
+            <div class="search-results" id="searchResults">
+                </div>
         </div>
     </div>
 
@@ -96,8 +107,11 @@
         document.getElementById('fileInput').addEventListener('change', async function(e) {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
+
             document.getElementById('statusText').innerText = `جاري المعالجة...`;
+            document.getElementById('chatBox').innerHTML = '<div style="text-align:center; margin-top:50px; color:#888;">جاري الترتيب الزمني الدقيق...</div>';
             
+            // ترتيب الملفات تنازلياً (message_3 قبل message_1) لضمان التسلسل الصحيح
             files.sort((a, b) => {
                 let numA = parseInt(a.name.match(/\d+/)) || 0;
                 let numB = parseInt(b.name.match(/\d+/)) || 0;
@@ -106,14 +120,18 @@
 
             allMessages = [];
             let globalIndex = 0;
+
             for (const file of files) {
                 const text = await file.text();
                 parseHTML(text, globalIndex);
-                globalIndex += 100000;
+                globalIndex += 100000; // مسافة أمان لكل ملف
             }
 
+            // ترتيب زمني، وإذا تساوت الدقيقة نعتمد على الترتيب الأصلي في الملف
             allMessages.sort((a, b) => {
-                if (a.dateObj.getTime() === b.dateObj.getTime()) return a.originalIndex - b.originalIndex;
+                if (a.dateObj.getTime() === b.dateObj.getTime()) {
+                    return a.originalIndex - b.originalIndex;
+                }
                 return a.dateObj - b.dateObj;
             });
             
@@ -126,6 +144,8 @@
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlString, 'text/html');
             const messageDivs = Array.from(doc.querySelectorAll('.pam._3-95._2ph-._a6-g.uiBoxWhite.noborder'));
+
+            // عكس المصفوفة لأن إنستغرام يضع الأحدث في الأعلى داخل الملف
             messageDivs.reverse();
 
             messageDivs.forEach((div, index) => {
@@ -134,53 +154,32 @@
                 const sender = senderEl.innerText.trim();
                 
                 let content = '';
-                let isMedia = false;
-                
-                // فحص محتوى الرسالة (نص، صورة، فيديو، أو ريلز)
-                const messageContainer = div.querySelector('div._3-95._a6-p');
-                if (messageContainer) {
-                    const textSpan = messageContainer.querySelector('span');
-                    const imgTag = messageContainer.querySelector('img');
-                    const videoTag = messageContainer.querySelector('video');
-                    const linkTag = messageContainer.querySelector('a');
-
-                    if (textSpan && textSpan.innerText.trim() !== "") {
-                        content = textSpan.innerText;
-                    } else if (imgTag) {
-                        content = "🖼️ تم إرسال صورة";
-                        isMedia = true;
-                    } else if (videoTag) {
-                        content = "🎥 تم إرسال فيديو / ريلز";
-                        isMedia = true;
-                    } else if (linkTag) {
-                        content = "🔗 تم مشاركة رابط أو ريلز";
-                        isMedia = true;
-                    } else {
-                        content = "📦 رسالة وسائط أو منشور";
-                        isMedia = true;
-                    }
-                }
+                const textSpan = div.querySelector('div._3-95._a6-p span');
+                if (textSpan) content = textSpan.innerText;
 
                 const timeText = div.querySelector('div._3-94._a6-o').innerText.trim();
                 const dateObj = new Date(timeText);
 
-                allMessages.push({
-                    id: `msg-${fileBaseIndex + index}`,
-                    originalIndex: fileBaseIndex + index,
-                    sender: sender,
-                    content: content,
-                    isMedia: isMedia,
-                    dateObj: dateObj,
-                    monthKey: `${dateObj.getFullYear()}-${dateObj.getMonth()}`,
-                    monthLabel: dateObj.toLocaleDateString('ar-IQ', { month: 'long', year: 'numeric' })
-                });
+                if(content !== '') {
+                    allMessages.push({
+                        id: `msg-${fileBaseIndex + index}`,
+                        originalIndex: fileBaseIndex + index,
+                        sender: sender,
+                        content: content,
+                        dateObj: dateObj,
+                        monthKey: `${dateObj.getFullYear()}-${dateObj.getMonth()}`,
+                        monthLabel: dateObj.toLocaleDateString('ar-IQ', { month: 'long', year: 'numeric' })
+                    });
+                }
             });
         }
 
+        // بناء واجهة المحادثة
         function renderMessages() {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
             let lastDate = '';
+
             allMessages.forEach(msg => {
                 const msgDate = msg.dateObj.toLocaleDateString('ar-IQ', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 if (msgDate !== lastDate) {
@@ -190,38 +189,54 @@
                     chatBox.appendChild(dateDiv);
                     lastDate = msgDate;
                 }
+
                 const wrapper = document.createElement('div');
                 wrapper.id = msg.id;
                 const isMe = msg.sender === myUsername;
                 wrapper.className = `message-wrapper ${isMe ? 'me' : 'them'}`;
+
                 const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${msg.isMedia ? 'media-placeholder' : ''}`;
+                msgDiv.className = 'message';
                 msgDiv.innerText = msg.content;
+
                 const timeDiv = document.createElement('div');
                 timeDiv.className = 'time';
                 timeDiv.innerText = msg.dateObj.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute:'2-digit' });
+
                 wrapper.appendChild(msgDiv);
                 wrapper.appendChild(timeDiv);
                 chatBox.appendChild(wrapper);
             });
         }
 
+        // فلترة الأشهر
         function populateDateFilter() {
             const filterSelect = document.getElementById('monthFilter');
-            filterSelect.innerHTML = '<option value="">القفز للتاريخ...</option>';
+            filterSelect.innerHTML = '<option value="">القفز لتاريخ معين...</option>';
+            
             const uniqueMonths = new Map();
-            allMessages.forEach(msg => { if (!uniqueMonths.has(msg.monthKey)) uniqueMonths.set(msg.monthKey, msg.monthLabel); });
+            allMessages.forEach(msg => {
+                if (!uniqueMonths.has(msg.monthKey)) {
+                    uniqueMonths.set(msg.monthKey, msg.monthLabel);
+                }
+            });
+
             uniqueMonths.forEach((label, key) => {
                 const opt = document.createElement('option');
-                opt.value = key; opt.innerText = label; filterSelect.appendChild(opt);
+                opt.value = key;
+                opt.innerText = label;
+                filterSelect.appendChild(opt);
             });
         }
 
         document.getElementById('monthFilter').addEventListener('change', (e) => {
-            const targetMsg = allMessages.find(m => m.monthKey === e.target.value);
+            const selectedKey = e.target.value;
+            if (!selectedKey) return;
+            const targetMsg = allMessages.find(m => m.monthKey === selectedKey);
             if (targetMsg) jumpToMessage(targetMsg.id);
         });
 
+        // واجهة البحث
         const searchOverlay = document.getElementById('searchOverlay');
         document.getElementById('openSearchBtn').addEventListener('click', () => { searchOverlay.style.display = 'flex'; document.getElementById('searchInput').focus(); });
         document.getElementById('closeSearchBtn').addEventListener('click', () => { searchOverlay.style.display = 'none'; });
@@ -230,23 +245,45 @@
             const term = e.target.value.toLowerCase();
             const resultsBox = document.getElementById('searchResults');
             resultsBox.innerHTML = '';
+            
             if (!term) return;
-            allMessages.filter(m => m.content.toLowerCase().includes(term)).forEach(msg => {
+
+            const filtered = allMessages.filter(m => m.content.toLowerCase().includes(term));
+            
+            filtered.forEach(msg => {
                 const item = document.createElement('div');
                 item.className = 'result-item';
+                
+                const dateStr = msg.dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
                 const avatarIcon = msg.sender === myUsername ? '👤' : '👥';
-                item.innerHTML = `<div class="result-avatar">${avatarIcon}</div><div class="result-details"><div class="result-name">${msg.sender}</div><div class="result-text">${msg.content}</div><div class="result-date">${msg.dateObj.toLocaleDateString('ar-IQ')}</div></div>`;
-                item.addEventListener('click', () => { searchOverlay.style.display = 'none'; jumpToMessage(msg.id); });
+
+                item.innerHTML = `
+                    <div class="result-avatar">${avatarIcon}</div>
+                    <div class="result-details">
+                        <div class="result-name">${msg.sender}</div>
+                        <div class="result-text">${msg.content}</div>
+                        <div class="result-date">${dateStr}</div>
+                    </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    searchOverlay.style.display = 'none';
+                    jumpToMessage(msg.id);
+                });
+                
                 resultsBox.appendChild(item);
             });
         });
 
+        // دالة القفز للرسالة مع تمييزها
         function jumpToMessage(msgId) {
             const element = document.getElementById(msgId);
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 element.classList.add('highlight-msg');
-                setTimeout(() => element.classList.remove('highlight-msg'), 2000);
+                setTimeout(() => {
+                    element.classList.remove('highlight-msg');
+                }, 2000);
             }
         }
     </script>
