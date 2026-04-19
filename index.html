@@ -2,30 +2,90 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Instagram iOS Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Instagram">
+    <title>Instagram</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="ios-header">
-        <button id="openSearchBtn" class="ios-icon-btn">🔍 بحث</button>
-        
-        <div class="header-center">
-            <div class="profile-pic">👤</div>
-            <div class="user-info">
-                <h1 class="username">Instagram User</h1>
-                <span class="status">أرشيف المحادثة</span>
+
+    <div id="inboxScreen" class="screen active">
+        <header class="ios-header inbox-header">
+            <button class="ios-icon-btn" style="font-size: 22px;">⟨</button>
+            <div class="header-center">
+                <h1 class="username" style="font-size: 16px;">upinthehellof ⌄</h1>
+            </div>
+            <button class="ios-icon-btn" style="font-size: 22px;">📝</button>
+        </header>
+
+        <div class="search-container-inbox">
+            <div class="search-bar-inbox">
+                <span>🔍</span>
+                <input type="text" placeholder="بحث">
             </div>
         </div>
-        
-        <button class="ios-icon-btn">ℹ️</button>
-    </header>
 
-    <main class="chat-container" id="chatBox">
-        <div id="loadingState" class="loading-state">
-            <p>جاري تحميل المحادثات وترتيبها...</p>
+        <div class="inbox-tabs">
+            <div class="tab active-tab">الأساسية</div>
+            <div class="tab">العامة</div>
+            <div class="tab">الطلبات</div>
         </div>
-    </main>
+
+        <main class="inbox-list" id="inboxList"></main>
+        
+        <nav class="bottom-nav">
+            <span>🏠</span>
+            <span>🔍</span>
+            <span>➕</span>
+            <span>🎬</span>
+            <span style="border-radius: 50%; background: #ccc; width: 24px; height: 24px;"></span>
+        </nav>
+    </div>
+
+
+    <div id="chatScreen" class="screen">
+        <header class="ios-header">
+            <button id="backToInboxBtn" class="ios-icon-btn back-btn">
+                <span style="font-size: 22px;">⟨</span> 
+                <span class="back-text" id="unreadCount">1</span>
+            </button>
+            
+            <div class="header-center" style="margin-left: -20px;">
+                <div class="profile-pic" id="chatHeaderAvatar">👩</div>
+                <div class="user-info">
+                    <h1 class="username" id="chatHeaderName">مريم</h1>
+                    <span class="status">Instagram</span>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="ios-icon-btn">📞</button>
+                <button class="ios-icon-btn">📹</button>
+            </div>
+        </header>
+
+        <div class="chat-tools">
+            <select id="monthFilter" class="ios-select-tool"><option value="">تصفية التاريخ 🗓️</option></select>
+            <button id="openSearchBtn" class="ios-btn-tool">🔍 بحث بالرسائل</button>
+        </div>
+
+        <main class="chat-container" id="chatBox">
+            <div id="loadingState" class="loading-state">
+                <p>جاري تحميل المحادثة...</p>
+            </div>
+        </main>
+        
+        <div class="chat-input-area">
+            <div class="camera-btn">📷</div>
+            <div class="input-bubble">
+                <input type="text" placeholder="مراسلة..." disabled>
+            </div>
+            <div class="mic-btn">🎙️</div>
+        </div>
+    </div>
+
 
     <div class="search-overlay" id="searchOverlay">
         <div class="search-header">
@@ -36,7 +96,7 @@
             <button id="closeSearchBtn" class="cancel-btn">إلغاء</button>
         </div>
         <div class="search-results" id="searchResults">
-            <div class="empty-search">اكتب للبحث في الرسائل...</div>
+            <div class="empty-search">اكتب للبحث في هذه المحادثة...</div>
         </div>
     </div>
 
