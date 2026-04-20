@@ -11,7 +11,14 @@
 </head>
 <body>
 
-    <div id="inboxScreen" class="screen active">
+    <div id="lockScreen" class="lock-screen active">
+        <div class="lock-icon">🔒</div>
+        <h2>أدخل الرمز السري</h2>
+        <input type="password" id="passInput" class="pass-input" placeholder="••••" maxlength="4" inputmode="numeric">
+        <div id="errorMessage" class="error-msg"></div>
+    </div>
+
+    <div id="inboxScreen" class="screen">
         <header class="ios-header inbox-header">
             <button class="ios-icon-btn" style="font-size: 22px;">⟨</button>
             <div class="header-center">
@@ -43,7 +50,6 @@
             <span style="border-radius: 50%; background: #ccc; width: 24px; height: 24px;"></span>
         </nav>
     </div>
-
 
     <div id="chatScreen" class="screen">
         <header class="ios-header">
@@ -85,7 +91,6 @@
             <div class="mic-btn">🎙️</div>
         </div>
     </div>
-
 
     <div class="search-overlay" id="searchOverlay">
         <div class="search-header">
