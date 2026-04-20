@@ -1,52 +1,74 @@
+// ================= نظام التشفير والحماية =================
+// هذه البصمة الرياضية تساوي الرقم (2002). مستحيل معرفة الرقم منها!
+const TARGET_HASH = 1537216;
+
+function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
+    }
+    return hash;
+}
+
+const passInput = document.getElementById('passInput');
+const errorMsg = document.getElementById('errorMessage');
+const lockScreen = document.getElementById('lockScreen');
+const inboxScreen = document.getElementById('inboxScreen');
+
+// مستمع القفل
+passInput.addEventListener('input', (e) => {
+    const val = e.target.value;
+    errorMsg.innerText = '';
+    
+    if (val.length === 4) {
+        if (simpleHash(val) === TARGET_HASH) {
+            // الرمز صحيح
+            lockScreen.classList.remove('active');
+            inboxScreen.classList.add('active'); // إظهار الدايركت
+            passInput.value = '';
+            passInput.blur();
+            renderInbox(); // تحميل الرسائل بعد الفتح
+        } else {
+            // الرمز خطأ
+            errorMsg.innerText = 'الرمز غير صحيح!';
+            passInput.value = '';
+        }
+    }
+});
+
+
+// ================= قاعدة البيانات والمحادثات =================
 const myUsername = "upinthehellof"; 
 
-// ================= قاعدة بيانات المحادثات =================
-// من هنا يمكنك إضافة أي محادثة جديدة في المستقبل!
 const chatsDatabase = [
     {
         id: "chat_maryam",
-        name: "مريم",             // الاسم الذي سيظهر بدلاً من Instagram user
-        avatar: "👩",             // صورة أو إيموجي العرض
-        previewMsg: "نشط منذ ساعتين", // نص تحت الاسم في القائمة
-        // ضع هنا أسماء ملفات مريم من الأقدم للأحدث
+        name: "مريم",
+        avatar: "👩",
+        previewMsg: "نشط منذ ساعتين",
         files: ['message_3.html', 'message_2.html', 'message_1.html'] 
-    },
-    // مثال لإضافة محادثة جديدة (امسح علامات // لتفعيلها مستقبلاً):
-    /*
-    {
-        id: "chat_ahmed",
-        name: "أحمد العراقي",
-        avatar: "👨",
-        previewMsg: "نشط الآن",
-        files: ['ahmed_msg_1.html'] 
     }
-    */
 ];
 
 let allMessages = [];
 let currentActiveChat = null;
 
-// ================= نظام إدارة الشاشات =================
-const inboxScreen = document.getElementById('inboxScreen');
 const chatScreen = document.getElementById('chatScreen');
 const inboxList = document.getElementById('inboxList');
 
-// بناء قائمة الدايركت (Inbox) عند فتح الموقع
 function renderInbox() {
     inboxList.innerHTML = '';
-    
     chatsDatabase.forEach(chat => {
         const item = document.createElement('div');
         item.className = 'inbox-item';
-        item.onclick = () => openChat(chat); // عند الضغط يفتح المحادثة
+        item.onclick = () => openChat(chat);
         
         item.innerHTML = `
             <div class="inbox-avatar">${chat.avatar}</div>
             <div class="inbox-details">
                 <div class="inbox-name">${chat.name}</div>
-                <div class="inbox-preview">
-                    <span>${chat.previewMsg}</span>
-                </div>
+                <div class="inbox-preview"><span>${chat.previewMsg}</span></div>
             </div>
             <div class="inbox-camera">📷</div>
         `;
@@ -54,19 +76,14 @@ function renderInbox() {
     });
 }
 
-// فتح محادثة معينة
 async function openChat(chatConfig) {
     currentActiveChat = chatConfig;
-    
-    // تغيير الشاشة
     inboxScreen.classList.remove('active');
     chatScreen.classList.add('active');
     
-    // تحديث الهيدر باسم مريم
     document.getElementById('chatHeaderName').innerText = chatConfig.name;
     document.getElementById('chatHeaderAvatar').innerText = chatConfig.avatar;
     
-    // تحميل الرسائل
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '<div class="loading-state"><p>جاري تحميل المحادثة...</p></div>';
     
@@ -87,13 +104,11 @@ async function openChat(chatConfig) {
     finalizeAndRender();
 }
 
-// العودة للقائمة
 document.getElementById('backToInboxBtn').addEventListener('click', () => {
     chatScreen.classList.remove('active');
     inboxScreen.classList.add('active');
 });
 
-// ================= معالجة وقراءة الرسائل =================
 function parseHTML(htmlString, fileBaseIndex) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, 'text/html');
@@ -104,7 +119,6 @@ function parseHTML(htmlString, fileBaseIndex) {
         const senderEl = div.querySelector('h2');
         if (!senderEl) return;
         
-        // **هنا السر**: إذا لم يكن المرسل أنت، فاستبدل اسمه باسم الشخص الحالي (مثلاً "مريم")
         let originalSender = senderEl.innerText.trim();
         let finalSenderName = (originalSender === myUsername) ? myUsername : currentActiveChat.name;
         
@@ -127,7 +141,7 @@ function parseHTML(htmlString, fileBaseIndex) {
                 id: `msg-${fileBaseIndex + index}`,
                 originalIndex: fileBaseIndex + index,
                 sender: finalSenderName,
-                isMe: (originalSender === myUsername), // للتمييز بين المرسل والمستقبل
+                isMe: (originalSender === myUsername),
                 content: content,
                 dateObj: dateObj,
                 monthKey: `${dateObj.getFullYear()}-${dateObj.getMonth()}`,
@@ -187,7 +201,6 @@ function finalizeAndRender() {
     setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
 }
 
-// ================= الفلتر والبحث (كما برمجناه سابقاً) =================
 function populateDateFilter() {
     const filterSelect = document.getElementById('monthFilter');
     filterSelect.innerHTML = '<option value="">تصفية التاريخ 🗓️</option>';
@@ -240,6 +253,3 @@ function jumpToMessage(msgId) {
         setTimeout(() => { element.classList.remove('highlight-msg'); }, 2000);
     }
 }
-
-// تشغيل النظام
-window.onload = renderInbox;
